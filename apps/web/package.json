@@ -36,6 +36,7 @@
     "@kit/accounts": "workspace:*",
     "@kit/auth": "workspace:*",
     "@kit/i18n": "workspace:*",
+    "@kit/licensing": "workspace:*",
     "@kit/next": "workspace:*",
     "@kit/scribe": "workspace:*",
     "@kit/supabase": "workspace:*",

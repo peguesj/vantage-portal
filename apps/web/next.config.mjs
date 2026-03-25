@@ -10,6 +10,7 @@ const INTERNAL_PACKAGES = [
   '@kit/supabase',
   '@kit/i18n',
   '@kit/next',
+  '@kit/licensing',
 ];
 
 /** @type {import('next').NextConfig} */

@@ -1,0 +1,9 @@
+{
+  "extends": "@kit/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+  },
+  "include": ["src/**/*", "test-fixtures/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
