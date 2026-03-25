@@ -330,6 +330,38 @@ git checkout -b recovery-branch checkpoint-pre-whmcs-port-20260123-144206
 
 ---
 
+### Sprint 2: MSSP Portal Sections (feat/mssp-sprint2-portal-sections)
+
+**Wave 1** — DB migrations (independent):
+- [x] **CP-10**: SOC schema — security_incidents + alerts tables, full RLS, enums
+- [x] **CP-11**: Billing schema — invoices table with Stripe fields and RLS
+- [x] **CP-12**: Support schema — departments + tickets + ticket_replies with RLS
+
+**Wave 2** — Server actions (depends on Wave 1):
+- [x] **CP-13**: SOC server actions — createIncident, listIncidents, updateIncident, listAlerts, acknowledgeAlert, getIncidentStats
+- [x] **CP-14**: Billing server actions — createInvoice, listInvoices, updateInvoice, getBillingStats
+- [x] **CP-15**: Support server actions — createTicket, listTickets, replyToTicket, getTicketStats
+
+**Wave 3** — Portal pages (depends on Wave 2):
+- [x] **CP-16**: SOC portal page — 4 KPI cards, Active Incidents table, Recent Alerts
+- [x] **CP-17**: Compliance portal page — 4 framework cards (SOC 2 Type II, ISO 27001, NIST CSF 2.0, CIS Controls v8.1) with progress bars
+- [x] **CP-18**: RMM portal page — 4 KPI cards, endpoint inventory empty state
+- [x] **CP-19**: Clients portal page — 4 KPI cards, client table, Add Client CTA
+- [x] **CP-20**: Billing portal page — 4 KPI cards, invoice list
+- [x] **CP-21**: Admin portal page — platform status, 6 admin section cards
+- [x] **CP-22**: Support portal page — 4 KPI cards, ticket queue
+
+**Bonus** — Infrastructure:
+- [x] **CP-23**: Docker containerization — multi-stage Dockerfile, docker-compose, Nginx, NATS JetStream
+- [x] **CP-24**: Supabase MCP — .mcp.json configured for local DB
+
+**Branch**: `feat/mssp-sprint2-portal-sections`
+**PR**: https://github.com/makerkit/nextjs-saas-starter-kit-lite/pull/30
+**Quality gates**: typecheck 16/16, lint 14/14, build pass, 10 tests pass
+**Live tested**: All 8 routes verified via Puppeteer
+
+---
+
 ## Attribution Policy
 
 Never include AI attribution in any externally submitted content:
