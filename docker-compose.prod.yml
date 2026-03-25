@@ -1,0 +1,126 @@
+# =============================================================================
+# docker-compose.prod.yml — Production overrides
+#
+# Merge with base compose:
+#   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Or via Makefile:
+#   make prod-up
+#
+# Key differences from dev:
+#   - web builds from multi-stage Dockerfile (standalone, no source mount)
+#   - env loaded from .env.docker.local (never baked into image)
+#   - Resource limits on all services
+#   - Restart policy: always
+#   - No port exposure for internal services (postgres, nats internal ports)
+#   - Nginx binds both :80 and :443 (TLS termination expected upstream or via
+#     a separate Caddy/Certbot sidecar — not configured here)
+# =============================================================================
+
+name: vantage-portal
+
+services:
+  # ---------------------------------------------------------------------------
+  # web — production multi-stage build (standalone Next.js)
+  # ---------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://portal.vantage.example.com}
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_PRODUCT_NAME: ${NEXT_PUBLIC_PRODUCT_NAME:-Vantage}
+        NEXT_PUBLIC_AUTH_PASSWORD: ${NEXT_PUBLIC_AUTH_PASSWORD:-true}
+        NEXT_PUBLIC_AUTH_MAGIC_LINK: ${NEXT_PUBLIC_AUTH_MAGIC_LINK:-false}
+        NEXT_PUBLIC_ENABLE_THEME_TOGGLE: ${NEXT_PUBLIC_ENABLE_THEME_TOGGLE:-true}
+        NEXT_PUBLIC_LANGUAGE_PRIORITY: ${NEXT_PUBLIC_LANGUAGE_PRIORITY:-application}
+        NEXT_PUBLIC_ENABLE_PERSONAL_ACCOUNT_DELETION: ${NEXT_PUBLIC_ENABLE_PERSONAL_ACCOUNT_DELETION:-false}
+        NEXT_PUBLIC_DEFAULT_THEME_MODE: ${NEXT_PUBLIC_DEFAULT_THEME_MODE:-light}
+    image: vantage-portal-web:${TAG:-latest}
+    restart: always
+    # No source volume mounts in production
+    volumes: []
+    # Runtime secrets only — never baked into the image layer
+    env_file:
+      - .env.docker.local
+    environment:
+      NODE_ENV: production
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+    # Expose only through nginx — do not publish port directly in production
+    ports: []
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ---------------------------------------------------------------------------
+  # postgres — production hardening
+  # ---------------------------------------------------------------------------
+  postgres:
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    # Do not expose Postgres port publicly in production
+    ports: []
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    # Do not mount migrations in production — apply via CI/CD pipeline
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # ---------------------------------------------------------------------------
+  # nats — production hardening
+  # ---------------------------------------------------------------------------
+  nats:
+    restart: always
+    # Do not publish monitoring port externally in production
+    ports:
+      - "4222:4222"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  # ---------------------------------------------------------------------------
+  # nginx — production: bind :80 and :443
+  # TLS certificates expected at /etc/nginx/certs/ (mount via CI/CD or secret)
+  # ---------------------------------------------------------------------------
+  nginx:
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      # TLS certs — provide via deployment pipeline
+      - ${TLS_CERT_DIR:-/etc/ssl/certs/vantage}:/etc/nginx/certs:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 32M

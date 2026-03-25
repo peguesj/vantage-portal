@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--db-url",
+        "postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+      ]
+    }
+  }
+}

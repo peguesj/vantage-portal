@@ -67,6 +67,30 @@ comment on table public.departments is
   'Support departments used for ticket routing and organisation within an MSSP account.';
 comment on column public.departments.email is
   'Optional inbound email address for routing tickets directly to this department.';
+
+-- Add columns that may not exist if the table was created by an earlier migration
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'departments'
+      and column_name  = 'is_active'
+  ) then
+    alter table public.departments add column is_active boolean not null default true;
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'departments'
+      and column_name  = 'account_id'
+  ) then
+    alter table public.departments add column account_id uuid references public.accounts(id) on delete cascade;
+  end if;
+end $$;
+
 comment on column public.departments.is_active is
   'Soft-disable a department without deleting it; inactive departments are hidden from routing.';
 
@@ -127,6 +151,30 @@ create table if not exists public.ticket_replies (
 
 comment on table public.ticket_replies is
   'Replies and internal notes on a support ticket. is_internal=true marks agent-only notes.';
+
+-- Add columns that may not exist if the table was created by an earlier migration
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'ticket_replies'
+      and column_name  = 'is_internal'
+  ) then
+    alter table public.ticket_replies add column is_internal boolean not null default false;
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'ticket_replies'
+      and column_name  = 'author_id'
+  ) then
+    alter table public.ticket_replies add column author_id uuid references auth.users(id) on delete set null;
+  end if;
+end $$;
+
 comment on column public.ticket_replies.is_internal is
   'When true this reply is an internal agent note, not visible to the client submitter.';
 comment on column public.ticket_replies.attachments is

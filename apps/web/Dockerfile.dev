@@ -1,0 +1,49 @@
+# =============================================================================
+# Development image — hot reload via volume mount
+# The monorepo root is the build context.
+# Run with: docker-compose up web
+# Source is mounted at /repo so changes reflect immediately.
+# =============================================================================
+FROM node:22-alpine AS dev
+
+RUN apk add --no-cache libc6-compat && \
+    corepack enable && corepack prepare pnpm@9.12.0 --activate
+
+WORKDIR /repo
+
+# Copy manifests and install dependencies.
+# The actual source is provided via volume mount at runtime so the image
+# only needs the lockfile layer for layer-cache efficiency.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY tooling/ tooling/
+
+COPY packages/ui/package.json              packages/ui/package.json
+COPY packages/shared/package.json          packages/shared/package.json
+COPY packages/supabase/package.json        packages/supabase/package.json
+COPY packages/i18n/package.json            packages/i18n/package.json
+COPY packages/next/package.json            packages/next/package.json
+COPY packages/admin/package.json           packages/admin/package.json
+COPY packages/billing/package.json         packages/billing/package.json
+COPY packages/domains/package.json         packages/domains/package.json
+COPY packages/scribe/package.json          packages/scribe/package.json
+COPY packages/whmcs/package.json           packages/whmcs/package.json
+COPY packages/licensing/package.json       packages/licensing/package.json
+# Features sub-packages (@kit/accounts, @kit/auth, @kit/support)
+COPY packages/features/accounts/package.json   packages/features/accounts/package.json
+COPY packages/features/auth/package.json       packages/features/auth/package.json
+COPY packages/features/support/package.json    packages/features/support/package.json
+COPY apps/web/package.json apps/web/package.json
+
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+WORKDIR /repo/apps/web
+
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
+
+EXPOSE 3000
+
+# pnpm dev invokes `pnpm with-env next dev --turbo` which reads .env.local.
+# In Docker we supply env via docker-compose env_file so use next dev directly.
+CMD ["pnpm", "exec", "next", "dev", "--turbo"]

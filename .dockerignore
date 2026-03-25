@@ -1,0 +1,56 @@
+# =============================================================================
+# .dockerignore — Vantage Portal MSSP
+# Keeps the build context lean by excluding files not needed during image build.
+# =============================================================================
+
+# Dependencies (installed fresh in each stage)
+node_modules
+**/node_modules
+
+# Next.js build artifacts (produced inside the builder stage)
+**/.next
+**/out
+
+# Development tooling
+**/.turbo
+**/dist
+**/build
+
+# Test files
+apps/e2e
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Git / CI
+.git
+.gitignore
+.github
+
+# Environment files (secrets — never bake into image)
+**/.env.local
+**/.env.*.local
+.env.docker.local
+
+# Docs and specs
+*.md
+specs/
+apm/
+AGENTS.md
+IMPLEMENTATION_PLAN.md
+PROMPT_*.md
+
+# Infra (not needed inside the Next.js image)
+infra/
+Makefile
+
+# Terraform state
+**/.terraform
+**/*.tfstate
+**/*.tfstate.backup
+
+# macOS
+.DS_Store
+**/.DS_Store

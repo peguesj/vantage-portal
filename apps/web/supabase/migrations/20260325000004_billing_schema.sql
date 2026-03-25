@@ -88,16 +88,59 @@ create table if not exists public.invoices (
 
 comment on table public.invoices is
   'MSSP invoices issued by an account to a client, with Stripe sync support.';
+
+-- Add stripe_invoice_id and metadata columns if they do not already exist
+-- (table may have been created by an earlier migration without these columns)
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'invoices'
+      and column_name  = 'stripe_invoice_id'
+  ) then
+    alter table public.invoices add column stripe_invoice_id text;
+  end if;
+end $$;
+
+do $$ begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'invoices'
+      and column_name  = 'metadata'
+  ) then
+    alter table public.invoices add column metadata jsonb not null default '{}';
+  end if;
+end $$;
+
 comment on column public.invoices.stripe_invoice_id is
   'Optional Stripe Invoice ID for payment gateway synchronisation.';
 comment on column public.invoices.metadata is
   'Arbitrary key-value store for integration-specific fields.';
 
 create index if not exists invoices_account_id_idx    on public.invoices (account_id);
-create index if not exists invoices_client_id_idx     on public.invoices (client_id);
 create index if not exists invoices_status_idx        on public.invoices (status);
 create index if not exists invoices_invoice_number_idx on public.invoices (invoice_number);
 create index if not exists invoices_due_date_idx      on public.invoices (due_date);
+
+-- client_id column may not exist when the table was created by an earlier migration
+do $$ begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name   = 'invoices'
+      and column_name  = 'client_id'
+  ) then
+    if not exists (
+      select 1 from pg_indexes
+      where schemaname = 'public'
+        and tablename  = 'invoices'
+        and indexname  = 'invoices_client_id_idx'
+    ) then
+      create index invoices_client_id_idx on public.invoices (client_id);
+    end if;
+  end if;
+end $$;
 
 -- =====================================================
 -- INVOICE LINE ITEMS

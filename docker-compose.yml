@@ -1,0 +1,164 @@
+# =============================================================================
+# docker-compose.yml — Vantage Portal MSSP — Development
+#
+# Services:
+#   web           Next.js 15 portal (hot reload via volume mount)
+#   postgres      PostgreSQL 16 with migrations applied on init
+#   nats          NATS JetStream event bus
+#   nginx         Reverse proxy (port 80 → web, /nats → monitoring)
+#
+# Usage:
+#   make up           Start all services in background
+#   make logs         Stream web service logs
+#   make shell        Open shell in web container
+#   make db-reset     Re-run all migrations
+#
+# Supabase Studio / local Supabase stack: managed via `pnpm supabase:web:start`
+# (runs outside compose on host Docker). Point NEXT_PUBLIC_SUPABASE_URL to
+# host.docker.internal:54321 in .env.docker.
+# =============================================================================
+
+name: vantage-portal
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  # ---------------------------------------------------------------------------
+  # web — Next.js 15 development server with hot reload
+  # ---------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile.dev
+    image: vantage-portal-web-dev
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    environment:
+      NODE_ENV: development
+      # Override Supabase URL to use postgres service when running full stack
+      # Uncomment if not using host Supabase:
+      # NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount full monorepo for hot reload — node_modules are from image
+      - .:/repo
+      - /repo/node_modules
+      - /repo/apps/web/node_modules
+      - /repo/apps/web/.next
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging: *default-logging
+    networks:
+      - vantage-net
+
+  # ---------------------------------------------------------------------------
+  # postgres — PostgreSQL 16
+  # Migrations from apps/web/supabase/migrations/ are applied at init.
+  # Note: for the full Supabase stack (auth, storage, realtime, studio) use
+  # `pnpm supabase:web:start` on the host instead of this service.
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Auto-run all migration files on first init (alphabetical order)
+      - ./apps/web/supabase/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: *default-logging
+    networks:
+      - vantage-net
+
+  # ---------------------------------------------------------------------------
+  # nats — NATS JetStream event bus
+  # Elixir/Phoenix backend (future) connects here on port 4222.
+  # Monitoring UI: http://localhost:8222
+  # ---------------------------------------------------------------------------
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    command: ["-c", "/etc/nats/nats.conf"]
+    ports:
+      - "4222:4222"   # Client connections
+      - "8222:8222"   # HTTP monitoring
+    volumes:
+      - ./infra/nats/nats.conf:/etc/nats/nats.conf:ro
+      - nats-data:/data/jetstream
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging: *default-logging
+    networks:
+      - vantage-net
+
+  # ---------------------------------------------------------------------------
+  # nginx — reverse proxy
+  # Routes: :80 → web:3000, /nats/ → nats:8222 (internal only)
+  # WebSocket upgrade configured for /ws path.
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging: *default-logging
+    networks:
+      - vantage-net
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres-data:
+    driver: local
+  nats-data:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  vantage-net:
+    driver: bridge
