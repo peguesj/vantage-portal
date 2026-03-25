@@ -76,6 +76,32 @@
     "administration": "Administration",
     "admin": "Admin Panel"
   },
+  "dashboard": {
+    "securityOps": {
+      "title": "Security Operations",
+      "description": "SOC dashboard, alert triage, and incident management"
+    },
+    "compliance": {
+      "title": "Compliance",
+      "description": "Framework mapping, evidence collection, and gap analysis"
+    },
+    "rmm": {
+      "title": "RMM & Devices",
+      "description": "Endpoint inventory, patch compliance, and remote control"
+    },
+    "clients": {
+      "title": "Client Management",
+      "description": "Onboard and manage MSSP client accounts"
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Invoicing, metering, and payment management"
+    },
+    "admin": {
+      "title": "Admin Panel",
+      "description": "Staff management, system settings, and platform configuration"
+    }
+  },
   "roles": {
     "owner": {
       "label": "Owner"
