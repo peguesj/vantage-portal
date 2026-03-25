@@ -356,7 +356,7 @@ git checkout -b recovery-branch checkpoint-pre-whmcs-port-20260123-144206
 - [x] **CP-24**: Supabase MCP — .mcp.json configured for local DB
 
 **Branch**: `feat/mssp-sprint2-portal-sections`
-**PR**: https://github.com/makerkit/nextjs-saas-starter-kit-lite/pull/30
+**Remote**: `origin` (https://github.com/peguesj/vantage-portal.git) — no upstream PR
 **Quality gates**: typecheck 16/16, lint 14/14, build pass, 10 tests pass
 **Live tested**: All 8 routes verified via Puppeteer
 
