@@ -1,0 +1,55 @@
+{
+  "name": "@kit/domains",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "format": "prettier --check \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas/domains.ts",
+    "./server/actions": "./src/server/actions.ts",
+    "./server/domain-service": "./src/server/domain-service.ts",
+    "./server/dns-service": "./src/server/dns-service.ts",
+    "./server/registrars/base": "./src/server/registrars/base.ts",
+    "./server/registrars/cloudflare": "./src/server/registrars/cloudflare.ts",
+    "./server/registrars/mock": "./src/server/registrars/mock.ts",
+    "./components/DomainSearch": "./src/components/DomainSearch.tsx",
+    "./components/DomainList": "./src/components/DomainList.tsx",
+    "./components/DNSManager": "./src/components/DNSManager.tsx",
+    "./components/TransferForm": "./src/components/TransferForm.tsx",
+    "./hooks/useDomains": "./src/hooks/useDomains.ts",
+    "./hooks/useDNS": "./src/hooks/useDNS.ts",
+    "./hooks/useDomainSearch": "./src/hooks/useDomainSearch.ts"
+  },
+  "dependencies": {
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@kit/eslint-config": "workspace:*",
+    "@kit/prettier-config": "workspace:*",
+    "@kit/shared": "workspace:*",
+    "@kit/supabase": "workspace:*",
+    "@kit/tsconfig": "workspace:*",
+    "@kit/ui": "workspace:*",
+    "@tanstack/react-query": "5.77.2",
+    "@types/react": "19.1.6",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react-hook-form": "^7.56.4",
+    "react-i18next": "^15.5.2",
+    "zod": "^3.25.32"
+  },
+  "prettier": "@kit/prettier-config",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
+  }
+}

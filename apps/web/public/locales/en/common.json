@@ -74,7 +74,8 @@
     "clientPortal": "Clients",
     "clients": "Client Management",
     "administration": "Administration",
-    "admin": "Admin Panel"
+    "admin": "Admin Panel",
+    "support": "Support"
   },
   "dashboard": {
     "securityOps": {

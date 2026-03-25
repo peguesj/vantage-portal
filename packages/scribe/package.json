@@ -1,0 +1,67 @@
+{
+  "name": "@kit/scribe",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "format": "prettier --check \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas/scribe.ts",
+    "./server/guide-service": "./src/server/guide-service.ts",
+    "./server/step-service": "./src/server/step-service.ts",
+    "./server/screenshot-service": "./src/server/screenshot-service.ts",
+    "./server/share-service": "./src/server/share-service.ts",
+    "./server/export-service": "./src/server/export-service.ts",
+    "./server/actions": "./src/server/actions.ts",
+    "./components/guide-list": "./src/components/GuideList.tsx",
+    "./components/guide-editor": "./src/components/GuideEditor.tsx",
+    "./components/step-editor": "./src/components/StepEditor.tsx",
+    "./components/guide-viewer": "./src/components/GuideViewer.tsx",
+    "./components/step-viewer": "./src/components/StepViewer.tsx",
+    "./components/guide-card": "./src/components/GuideCard.tsx",
+    "./components/share-dialog": "./src/components/ShareDialog.tsx",
+    "./components/export-menu": "./src/components/ExportMenu.tsx",
+    "./components/screenshot-annotator": "./src/components/ScreenshotAnnotator.tsx",
+    "./components/recording-controls": "./src/components/RecordingControls.tsx",
+    "./hooks/use-guides": "./src/hooks/useGuides.ts",
+    "./hooks/use-guide": "./src/hooks/useGuide.ts"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@kit/eslint-config": "workspace:*",
+    "@kit/next": "workspace:*",
+    "@kit/prettier-config": "workspace:*",
+    "@kit/shared": "workspace:*",
+    "@kit/supabase": "workspace:*",
+    "@kit/tsconfig": "workspace:*",
+    "@kit/ui": "workspace:*",
+    "@supabase/supabase-js": "2.48.1",
+    "@tanstack/react-query": "5.77.2",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.56.4",
+    "react-i18next": "^15.5.2",
+    "sonner": "^1.7.4",
+    "zod": "^3.25.32"
+  },
+  "prettier": "@kit/prettier-config",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
+  }
+}

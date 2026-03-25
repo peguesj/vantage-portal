@@ -21,6 +21,7 @@ const PathsSchema = z.object({
     compliance: z.string().min(1),
     clients: z.string().min(1),
     admin: z.string().min(1),
+    support: z.string().min(1),
   }),
 });
 
@@ -45,6 +46,7 @@ const pathsConfig = PathsSchema.parse({
     compliance: '/home/compliance',
     clients: '/home/clients',
     admin: '/home/admin',
+    support: '/home/support',
   },
 } satisfies z.infer<typeof PathsSchema>);
 

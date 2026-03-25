@@ -1,0 +1,64 @@
+{
+  "name": "@kit/billing",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "format": "prettier --check \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas/billing.ts",
+    "./server/actions": "./src/server/actions.ts",
+    "./server/billing-actions": "./src/server/billing-server-actions.ts",
+    "./server/invoice-service": "./src/server/invoice-service.ts",
+    "./server/payment-service": "./src/server/payment-service.ts",
+    "./server/stripe": "./src/server/stripe.ts",
+    "./components/invoice-list": "./src/components/InvoiceList.tsx",
+    "./components/invoice-detail": "./src/components/InvoiceDetail.tsx",
+    "./components/payment-form": "./src/components/PaymentForm.tsx",
+    "./components/billing-dashboard": "./src/components/BillingDashboard.tsx",
+    "./hooks/use-invoices": "./src/hooks/useInvoices.ts",
+    "./hooks/use-payments": "./src/hooks/usePayments.ts",
+    "./hooks/use-subscription": "./src/hooks/useSubscription.ts"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5",
+    "stripe": "^14.14.0"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@kit/eslint-config": "workspace:*",
+    "@kit/next": "workspace:*",
+    "@kit/prettier-config": "workspace:*",
+    "@kit/shared": "workspace:*",
+    "@kit/supabase": "workspace:*",
+    "@kit/tsconfig": "workspace:*",
+    "@kit/ui": "workspace:*",
+    "@stripe/react-stripe-js": "^2.5.0",
+    "@stripe/stripe-js": "^3.0.6",
+    "@supabase/supabase-js": "2.48.1",
+    "@tanstack/react-query": "5.77.2",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.56.4",
+    "react-i18next": "^15.5.2",
+    "sonner": "^1.7.4",
+    "zod": "^3.25.32"
+  },
+  "prettier": "@kit/prettier-config",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
+  }
+}

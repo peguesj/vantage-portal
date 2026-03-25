@@ -1,0 +1,42 @@
+{
+  "name": "@kit/whmcs",
+  "private": true,
+  "version": "0.1.0",
+  "description": "WHMCS API client with type-safe interfaces and Zod validation",
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "format": "prettier --check \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "prettier": "@kit/prettier-config",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./types": "./src/types.ts",
+    "./endpoints/clients": "./src/endpoints/clients.ts",
+    "./endpoints/products": "./src/endpoints/products.ts",
+    "./endpoints/orders": "./src/endpoints/orders.ts",
+    "./endpoints/invoices": "./src/endpoints/invoices.ts",
+    "./endpoints/tickets": "./src/endpoints/tickets.ts",
+    "./endpoints/domains": "./src/endpoints/domains.ts",
+    "./utils/auth": "./src/utils/auth.ts",
+    "./utils/errors": "./src/utils/errors.ts"
+  },
+  "dependencies": {
+    "zod": "^3.25.32"
+  },
+  "devDependencies": {
+    "@kit/eslint-config": "workspace:*",
+    "@kit/prettier-config": "workspace:*",
+    "@kit/shared": "workspace:*",
+    "@kit/tsconfig": "workspace:*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
+  }
+}

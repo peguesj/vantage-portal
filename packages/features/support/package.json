@@ -1,0 +1,65 @@
+{
+  "name": "@kit/support",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules",
+    "format": "prettier --check \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas/tickets.ts",
+    "./server/actions": "./src/server/actions.ts",
+    "./server/ticket-service": "./src/server/services/ticket-service.ts",
+    "./server/department-service": "./src/server/services/department-service.ts",
+    "./server/canned-response-service": "./src/server/services/canned-response-service.ts",
+    "./server/email-service": "./src/server/services/email-service.ts",
+    "./components": "./src/components/index.ts",
+    "./components/TicketList": "./src/components/TicketList.tsx",
+    "./components/TicketDetail": "./src/components/TicketDetail.tsx",
+    "./components/CreateTicket": "./src/components/CreateTicket.tsx",
+    "./components/TicketReply": "./src/components/TicketReply.tsx",
+    "./components/DepartmentSelect": "./src/components/DepartmentSelect.tsx",
+    "./components/PriorityBadge": "./src/components/PriorityBadge.tsx",
+    "./components/StatusBadge": "./src/components/StatusBadge.tsx",
+    "./components/CannedResponsePicker": "./src/components/CannedResponsePicker.tsx",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@kit/eslint-config": "workspace:*",
+    "@kit/next": "workspace:*",
+    "@kit/prettier-config": "workspace:*",
+    "@kit/shared": "workspace:*",
+    "@kit/supabase": "workspace:*",
+    "@kit/tsconfig": "workspace:*",
+    "@kit/ui": "workspace:*",
+    "@radix-ui/react-icons": "^1.3.2",
+    "@supabase/supabase-js": "2.48.1",
+    "@tanstack/react-query": "5.77.2",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.56.4",
+    "react-i18next": "^15.5.2",
+    "sonner": "^1.7.4",
+    "zod": "^3.25.32"
+  },
+  "prettier": "@kit/prettier-config",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ]
+    }
+  }
+}
