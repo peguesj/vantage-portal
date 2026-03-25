@@ -269,9 +269,9 @@ pnpm run test        # must pass
 
 ### CCEM APM
 
-- **Dashboard**: http://localhost:3031
+- **Dashboard**: http://localhost:3032
 - **Config**: `/Users/jeremiah/Developer/vantage-portal/apm/apm_config.json`
-- **Port**: 3031
+- **Port**: 3032
 - Always running as background service; communicate session start/end via `/ccem apm`
 
 ### OpsDoc / Showcase
