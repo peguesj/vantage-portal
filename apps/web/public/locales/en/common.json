@@ -58,12 +58,23 @@
   "routes": {
     "home": "Home",
     "account": "Account",
-    "members": "Members",
+    "members": "Team Members",
     "billing": "Billing",
     "dashboard": "Dashboard",
     "settings": "Settings",
     "profile": "Profile",
-    "application": "Application"
+    "application": "Overview",
+    "guides": "Guides",
+    "accountSettings": "Account Settings",
+    "securityOperations": "Security Operations",
+    "soc": "SOC Dashboard",
+    "compliance": "Compliance",
+    "rmmDevices": "RMM & Devices",
+    "rmm": "Device Management",
+    "clientPortal": "Clients",
+    "clients": "Client Management",
+    "administration": "Administration",
+    "admin": "Admin Panel"
   },
   "roles": {
     "owner": {
