@@ -166,11 +166,11 @@ create index if not exists alerts_client_id_idx   on public.alerts(client_id);
 -- Reuse set_updated_at() defined in 20260325000000.
 -- =====================================================
 
-create trigger security_incidents_updated_at
+create or replace trigger security_incidents_updated_at
   before update on public.security_incidents
   for each row execute function public.set_updated_at();
 
-create trigger alerts_updated_at
+create or replace trigger alerts_updated_at
   before update on public.alerts
   for each row execute function public.set_updated_at();
 
@@ -191,6 +191,7 @@ alter table public.alerts             enable row level security;
 create policy "security_incidents_select"
   on public.security_incidents
   for select
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships
@@ -201,6 +202,7 @@ create policy "security_incidents_select"
 create policy "security_incidents_insert"
   on public.security_incidents
   for insert
+  to authenticated
   with check (
     account_id in (
       select account_id from public.accounts_memberships
@@ -211,6 +213,7 @@ create policy "security_incidents_insert"
 create policy "security_incidents_update"
   on public.security_incidents
   for update
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships
@@ -227,6 +230,7 @@ create policy "security_incidents_update"
 create policy "security_incidents_delete"
   on public.security_incidents
   for delete
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships
@@ -241,6 +245,7 @@ create policy "security_incidents_delete"
 create policy "alerts_select"
   on public.alerts
   for select
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships
@@ -251,6 +256,7 @@ create policy "alerts_select"
 create policy "alerts_insert"
   on public.alerts
   for insert
+  to authenticated
   with check (
     account_id in (
       select account_id from public.accounts_memberships
@@ -261,6 +267,7 @@ create policy "alerts_insert"
 create policy "alerts_update"
   on public.alerts
   for update
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships
@@ -277,6 +284,7 @@ create policy "alerts_update"
 create policy "alerts_delete"
   on public.alerts
   for delete
+  to authenticated
   using (
     account_id in (
       select account_id from public.accounts_memberships

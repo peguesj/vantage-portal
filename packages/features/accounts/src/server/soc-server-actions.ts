@@ -60,6 +60,8 @@ export interface Alert {
     | 'false_positive'
     | 'suppressed';
   source: string | null;
+  acknowledged_by: string | null;
+  acknowledged_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -91,8 +93,26 @@ type SocSchema = {
       };
       alerts: {
         Row: Alert;
-        Insert: Omit<Alert, 'id' | 'status' | 'created_at' | 'updated_at'> &
-          Partial<Pick<Alert, 'id' | 'status' | 'created_at' | 'updated_at'>>;
+        Insert: Omit<
+          Alert,
+          | 'id'
+          | 'status'
+          | 'acknowledged_by'
+          | 'acknowledged_at'
+          | 'created_at'
+          | 'updated_at'
+        > &
+          Partial<
+            Pick<
+              Alert,
+              | 'id'
+              | 'status'
+              | 'acknowledged_by'
+              | 'acknowledged_at'
+              | 'created_at'
+              | 'updated_at'
+            >
+          >;
         Update: Partial<Omit<Alert, 'id' | 'account_id'>>;
         Relationships: [];
       };
@@ -301,8 +321,9 @@ export async function listAlerts(
 
 /**
  * @name acknowledgeAlert
- * @description Mark an alert as acknowledged. RLS enforces that the caller
- * must be an authenticated member of the account that owns the alert.
+ * @description Mark an alert as acknowledged. Records the acknowledging user
+ * and timestamp for SOC 2 / ISO 27001 audit trail requirements. RLS enforces
+ * that the caller must be an authenticated member of the account.
  */
 export async function acknowledgeAlert(
   alertId: string,
@@ -310,9 +331,17 @@ export async function acknowledgeAlert(
   try {
     const supabase = getSupabaseServerClient<SocSchema>();
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     const { data, error } = await supabase
       .from('alerts')
-      .update({ status: 'acknowledged' })
+      .update({
+        status: 'acknowledged',
+        acknowledged_by: user?.id ?? null,
+        acknowledged_at: new Date().toISOString(),
+      })
       .eq('id', alertId)
       .select()
       .single();

@@ -60,7 +60,7 @@ const STATUS_BADGE: Record<
 > = {
   compliant: 'success',
   in_progress: 'secondary',
-  gap: 'warning' as 'secondary',
+  gap: 'warning',
 };
 
 const STATUS_ICON: Record<FrameworkCard['status'], React.ElementType> = {

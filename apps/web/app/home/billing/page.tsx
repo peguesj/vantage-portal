@@ -58,7 +58,7 @@ function formatCurrency(amount: number, currency = 'USD') {
     style: 'currency',
     currency,
     minimumFractionDigits: 2,
-  }).format(amount / 100);
+  }).format(amount);
 }
 
 export default function BillingPage() {
